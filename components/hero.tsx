@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { getYearsOfExperience } from "@/lib/utils";
 import TypewriterTextAnimation from "./text-animation";
 import { SOCIAL_LINKS } from "@/constants/informatin";
+import DownloadResume from "./download-resume";
 
 
 export default function Hero() {
@@ -108,14 +109,15 @@ export default function Hero() {
               >
                 View My Work
               </Button>
-              <Button
+              {/* <Button
                 variant="outline"
                 size="lg"
                 className="btn-masculine text-lg px-8 py-6 bg-transparent"
                 onClick={scrollToContact}
               >
                 Get In Touch
-              </Button>
+              </Button> */}
+              <DownloadResume />
             </div>
 
             {/* Social Links */}
