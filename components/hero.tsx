@@ -53,13 +53,6 @@ export default function Hero() {
     return () => ctx.revert();
   }, []);
 
-  const scrollToContact = () => {
-    const element = document.querySelector("#contact");
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
   const scrollToProjects = () => {
     const element = document.querySelector("#projects");
     if (element) {
@@ -109,14 +102,7 @@ export default function Hero() {
               >
                 View My Work
               </Button>
-              {/* <Button
-                variant="outline"
-                size="lg"
-                className="btn-masculine text-lg px-8 py-6 bg-transparent"
-                onClick={scrollToContact}
-              >
-                Get In Touch
-              </Button> */}
+
               <DownloadResume />
             </div>
 
