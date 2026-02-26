@@ -48,12 +48,12 @@ export default function RootLayout(arg: { children: React.ReactNode }) {
           enableSystem
           disableTransitionOnChange
         >
-          {arg.children}
-          <Chatbot
+          {/* {arg.children} */}
+          {/* <Chatbot
             chatflowId={process.env.NEXT_PUBLIC_FLOWISE_CHATFLOW_ID ?? ""}
             apiHost={process.env.NEXT_PUBLIC_FLOWISE_API_HOST ?? ""}
             apiKey={process.env.NEXT_PUBLIC_FLOWISE_API_KEY}
-          />
+          /> */}
         </ThemeProvider>
       </body>
     </html>
