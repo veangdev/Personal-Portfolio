@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security Awareness</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',sans-serif;background:#0a0e1a;color:#fff;overflow:hidden;height:100vh;}
+.pres{width:100%;height:100vh;position:relative;}
+.slide{display:none;width:100%;height:100vh;position:absolute;top:0;left:0;padding:52px 70px 88px;flex-direction:column;justify-content:center;animation:fadeIn .4s ease;}
+.slide.active{display:flex;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.blob{position:absolute;border-radius:50%;filter:blur(100px);opacity:.11;pointer-events:none;z-index:0;}
+.grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(0,180,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,180,255,.04) 1px,transparent 1px);background-size:50px 50px;z-index:0;}
+.content{position:relative;z-index:1;width:100%;}
+
+/* page info bottom-left */
+.page-info{position:absolute;bottom:26px;left:70px;display:flex;align-items:center;gap:10px;z-index:10;}
+.page-num{font-size:13px;font-weight:800;color:rgba(255,255,255,.18);letter-spacing:1px;}
+.presenter-pill{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:30px;padding:5px 12px 5px 6px;}
+.p-av{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;flex-shrink:0;}
+.p-label{font-size:9px;color:#5070a0;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;line-height:1;}
+.p-name{font-size:12px;font-weight:700;color:#d0e0f0;line-height:1.3;}
+
+/* badges */
+.badge{display:inline-flex;align-items:center;gap:6px;padding:5px 16px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:18px;width:fit-content;}
+.b-blue  {background:rgba(0,180,255,.12);border:1px solid rgba(0,180,255,.35);color:#00b4ff;}
+.b-purple{background:rgba(160,0,255,.12);border:1px solid rgba(160,0,255,.35);color:#b44fff;}
+.b-green {background:rgba(0,220,120,.12);border:1px solid rgba(0,220,120,.35);color:#00dc78;}
+.b-pink  {background:rgba(255,80,160,.12);border:1px solid rgba(255,80,160,.35);color:#ff50a0;}
+.b-teal  {background:rgba(0,220,200,.12);border:1px solid rgba(0,220,200,.35);color:#00dcc8;}
+.b-orange{background:rgba(255,150,0,.12);border:1px solid rgba(255,150,0,.35);color:#ff9600;}
+.b-red   {background:rgba(255,50,80,.12);border:1px solid rgba(255,50,80,.35);color:#ff5060;}
+
+h1.big{font-size:58px;font-weight:900;line-height:1.08;margin-bottom:18px;}
+h2.ht{font-size:42px;font-weight:900;line-height:1.1;margin-bottom:10px;}
+p.lead{font-size:18px;color:#90aec8;line-height:1.8;max-width:720px;}
+p.body{font-size:15px;color:#b0c8dc;line-height:1.75;}
+.accent{color:#00b4ff;}
+.aline{height:4px;width:54px;border-radius:2px;margin-bottom:22px;}
+
+.cards{display:flex;gap:18px;flex-wrap:wrap;margin-top:22px;}
+.card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:24px;flex:1;min-width:180px;transition:transform .2s,border-color .2s;}
+.card:hover{transform:translateY(-4px);}
+.card .ico{font-size:34px;margin-bottom:12px;}
+.card h4{font-size:17px;font-weight:700;margin-bottom:8px;}
+.card p{font-size:14px;color:#708898;line-height:1.65;}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:20px;}
+.panel{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:22px;}
+.panel h4{font-size:17px;font-weight:700;margin-bottom:12px;}
+
+ul.sl{list-style:none;margin-top:10px;}
+ul.sl li{padding:9px 0 9px 24px;position:relative;font-size:15px;color:#b0c8dc;border-bottom:1px solid rgba(255,255,255,.05);line-height:1.6;}
+ul.sl li:last-child{border-bottom:none;}
+ul.sl li::before{content:'▸';position:absolute;left:0;}
+.sl-blue li::before{color:#00b4ff;}
+.sl-purple li::before{color:#b44fff;}
+.sl-green li::before{color:#00dc78;}
+.sl-pink li::before{color:#ff50a0;}
+.sl-teal li::before{color:#00dcc8;}
+.sl-orange li::before{color:#ff9600;}
+.sl-red li::before{color:#ff5060;}
+
+.steps{display:flex;gap:14px;flex-wrap:wrap;margin-top:20px;}
+.step{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:18px 20px;flex:1;min-width:160px;}
+.step .snum{font-size:30px;font-weight:900;line-height:1;margin-bottom:8px;}
+.step p{font-size:14px;color:#90a8c0;line-height:1.6;}
+
+.stats{display:flex;gap:28px;margin-top:24px;flex-wrap:wrap;}
+.stat .sval{font-size:44px;font-weight:900;}
+.stat .sdesc{font-size:13px;color:#4a6480;margin-top:5px;line-height:1.45;}
+
+.scenario-box{background:rgba(255,200,50,.05);border:1px solid rgba(255,200,50,.22);border-radius:16px;padding:20px 26px;margin:16px 0;}
+.scenario-box p{font-size:15px;color:#d8c880;line-height:1.75;font-style:italic;}
+
+.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);margin:18px 0;}
+
+.members{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
+.mc{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:7px 14px;transition:all .25s;cursor:default;}
+.mc:hover{background:rgba(0,180,255,.08);border-color:rgba(0,180,255,.3);transform:translateY(-2px);}
+.mc .mn{font-size:9px;font-weight:900;color:#00b4ff;opacity:.55;letter-spacing:1px;}
+.mc .mname{font-size:13px;font-weight:600;color:#c8dce8;}
+
+.quote{border-left:3px solid #00b4ff;padding:13px 20px;background:rgba(0,180,255,.05);border-radius:0 12px 12px 0;margin:14px 0;}
+.quote p{font-size:15px;color:#90c8e0;line-height:1.7;font-style:italic;}
+
+.ag-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:14px;transition:transform .2s;margin-bottom:10px;}
+.ag-card:hover{transform:translateX(5px);}
+.ag-ico{font-size:26px;width:46px;text-align:center;flex-shrink:0;}
+.ag-text h4{font-size:16px;font-weight:700;margin-bottom:3px;}
+.ag-text p{font-size:13px;color:#608080;line-height:1.5;}
+
+/* QUIZ */
+.quiz-wrap{width:100%;max-width:860px;margin:0 auto;}
+.quiz-q{font-size:22px;font-weight:800;color:#fff;margin-bottom:20px;line-height:1.4;}
+.quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;}
+.opt{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:14px 20px;font-size:15px;color:#b0c8dc;cursor:pointer;transition:all .2s;text-align:left;display:flex;align-items:center;gap:10px;}
+.opt:hover:not(.disabled){background:rgba(0,180,255,.1);border-color:rgba(0,180,255,.4);color:#fff;}
+.opt.correct{background:rgba(0,220,120,.15);border-color:#00dc78;color:#00dc78;}
+.opt.wrong{background:rgba(255,50,80,.12);border-color:#ff5060;color:#ff5060;}
+.opt.disabled{cursor:default;}
+.opt-letter{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;}
+.quiz-feedback{font-size:15px;font-weight:700;min-height:24px;margin-bottom:14px;}
+.quiz-feedback.ok{color:#00dc78;}
+.quiz-feedback.no{color:#ff5060;}
+.quiz-nav{display:flex;align-items:center;justify-content:space-between;margin-top:4px;}
+.quiz-prog{font-size:13px;color:#4a6480;}
+.qbtn{background:rgba(0,180,255,.12);border:1px solid rgba(0,180,255,.3);color:#00b4ff;padding:10px 26px;border-radius:30px;cursor:pointer;font-size:14px;font-weight:700;transition:all .2s;}
+.qbtn:hover{background:rgba(0,180,255,.25);}
+.quiz-progress-bar{height:4px;background:rgba(255,255,255,.07);border-radius:2px;margin-bottom:28px;overflow:hidden;}
+.quiz-progress-fill{height:100%;background:linear-gradient(90deg,#00b4ff,#00dc78);border-radius:2px;transition:width .4s;}
+.score-screen{display:none;}
+.score-screen.show{display:block;}
+.score-big{font-size:80px;font-weight:900;line-height:1;}
+
+/* NAV */
+.nav{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:12px;background:rgba(10,14,26,.88);border:1px solid rgba(255,255,255,.08);border-radius:40px;padding:8px 20px;z-index:200;backdrop-filter:blur(14px);}
+.nav button{background:rgba(255,255,255,.07);border:none;color:#fff;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:16px;transition:background .2s;}
+.nav button:hover{background:rgba(0,180,255,.3);}
+.nav .counter{font-size:12px;color:#4a6480;min-width:56px;text-align:center;}
+.dots{display:flex;gap:5px;align-items:center;}
+.dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.15);transition:all .3s;cursor:pointer;}
+.dot.active{background:#00b4ff;width:18px;border-radius:3px;}
+</style>
+</head>
+<body>
+<div class="pres">
+
+<!-- ══════════════════════════════════
+  SLIDES 1–2 · KROH VEANG 🔵
+  Topic: Cover + Agenda
+══════════════════════════════════ -->
+
+<!-- SLIDE 1 · COVER -->
+<div class="slide active" style="background:linear-gradient(135deg,#060b18,#0b1e30,#080f1e);">
+  <div class="grid-bg"></div>
+  <div class="blob" style="width:540px;height:540px;background:#00b4ff;top:-150px;right:-130px;"></div>
+  <div class="blob" style="width:320px;height:320px;background:#0044ff;bottom:-70px;left:50px;"></div>
+  <div class="content">
+    <div class="badge b-blue">🛡️ Introduction to Cybersecurity</div>
+    <h1 class="big">Security <span class="accent">Awareness</span><br>for Employees</h1>
+    <p class="lead">Understanding threats, best practices, and building a resilient culture of cybersecurity across modern organizations.</p>
+    <div class="stats">
+      <div class="stat"><div class="sval accent">95%</div><div class="sdesc">of breaches involve<br>human error</div></div>
+      <div class="stat"><div class="sval" style="color:#b44fff;">3.4B</div><div class="sdesc">phishing emails<br>sent daily</div></div>
+      <div class="stat"><div class="sval" style="color:#ff9600;">$4.9M</div><div class="sdesc">avg. cost of<br>a data breach</div></div>
+      <div class="stat"><div class="sval" style="color:#00dc78;">82%</div><div class="sdesc">attacks target<br>employee credentials</div></div>
+    </div>
+    <div class="divider" style="margin-top:26px;"></div>
+    <p style="font-size:11px;color:#3a5470;letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:12px;">Presented by</p>
+    <div class="members">
+      <div class="mc"><span class="mn">01</span><span class="mname">Kroh Veang</span></div>
+      <div class="mc"><span class="mn">02</span><span class="mname">Muth Linna</span></div>
+      <div class="mc"><span class="mn">03</span><span class="mname">Chhuoy Soki</span></div>
+      <div class="mc"><span class="mn">04</span><span class="mname">Vey Sara</span></div>
+      <div class="mc"><span class="mn">05</span><span class="mname">Hang Vansao</span></div>
+      <div class="mc"><span class="mn">06</span><span class="mname">Nhea Villa</span></div>
+      <div class="mc"><span class="mn">07</span><span class="mname">Rem Hay</span></div>
+    </div>
+  </div>
+  <div class="page-info">
+    <span class="page-num">01 / 15</span>
+    <div class="presenter-pill">
+      <div class="p-av" style="background:linear-gradient(135deg,#0066ff,#00b4ff);">KV</div>
+      <div><div class="p-label">Presenter</div><div class="p-name">Kroh Veang</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 2 · AGENDA -->
+<div class="slide" style="background:linear-gradient(135deg,#080d1c,#0c1830);">
+  <div class="blob" style="width:420px;height:420px;background:#0055ff;top:0;right:0;"></div>
+  <div class="content">
+    <div class="badge b-blue">📋 Agenda</div>
+    <h2 class="ht">What We'll <span class="accent">Cover</span> Today</h2>
+    <p class="lead" style="font-size:15px;margin-bottom:20px;">7 presenters · 7 unique topics · 1 shared goal — making every employee a security asset.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div class="ag-card"><div class="ag-ico">🎯</div><div class="ag-text"><h4 style="color:#00b4ff;">Kroh Veang</h4><p>Slides 1–2 · Introduction & Agenda</p></div></div>
+      <div class="ag-card"><div class="ag-ico">🔑</div><div class="ag-text"><h4 style="color:#b44fff;">Muth Linna</h4><p>Slides 3–4 · Phishing & Social Engineering</p></div></div>
+      <div class="ag-card"><div class="ag-ico">📧</div><div class="ag-text"><h4 style="color:#00dc78;">Chhuoy Soki</h4><p>Slides 5–6 · Password & Auth Threats</p></div></div>
+      <div class="ag-card"><div class="ag-ico">🚨</div><div class="ag-text"><h4 style="color:#ff50a0;">Vey Sara</h4><p>Slides 7–8 · Physical Security Threats</p></div></div>
+      <div class="ag-card"><div class="ag-ico">🏛️</div><div class="ag-text"><h4 style="color:#00dcc8;">Hang Vansao</h4><p>Slides 9–10 · Email Safety & Best Practices</p></div></div>
+      <div class="ag-card"><div class="ag-ico">🔒</div><div class="ag-text"><h4 style="color:#ff9600;">Nhea Villa</h4><p>Slides 11–12 · Password Mgmt, MFA & Devices</p></div></div>
+      <div class="ag-card"><div class="ag-ico">🏢</div><div class="ag-text"><h4 style="color:#ff5060;">Rem Hay</h4><p>Slides 13–14 · Security Culture & Scenario</p></div></div>
+    </div>
+  </div>
+  <div class="page-info">
+    <span class="page-num">02 / 15</span>
+    <div class="presenter-pill">
+      <div class="p-av" style="background:linear-gradient(135deg,#0066ff,#00b4ff);">KV</div>
+      <div><div class="p-label">Presenter</div><div class="p-name">Kroh Veang</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+  SLIDES 3–4 · MUTH LINNA 🟣
+  Topic: Phishing & Social Engineering
+══════════════════════════════════ -->
+
+<!-- SLIDE 3 · Phishing Definitions -->
+<div class="slide" style="background:linear-gradient(135deg,#0e0820,#180d30);">
+  <div class="blob" style="width:440px;height:440px;background:#7700ff;top:-110px;right:-90px;"></div>
+  <div class="content">
+    <div class="badge b-purple">Part 1 · Phishing & Social Engineering</div>
+    <div class="aline" style="background:linear-gradient(90deg,#b44fff,#7700ff);"></div>
+    <h2 class="ht">Phishing & <span style="color:#b44fff;">Social Engineering</span></h2>
+    <p class="body" style="max-width:700px;margin-bottom:4px;">Attackers exploit human psychology — not firewalls. Awareness is the #1 defense.</p>
+    <div class="cards" style="margin-top:20px;">
+      <div class="card" style="border-color:rgba(160,0,255,.25);">
+        <div class="ico">🎣</div>
+        <h4 style="color:#b44fff;">Phishing</h4>
+        <p>Mass deceptive emails mimicking trusted brands — banks, Microsoft, HR — to steal credentials or install malware through malicious links or attachments.</p>
+      </div>
+      <div class="card" style="border-color:rgba(160,0,255,.18);">
+        <div class="ico">🎯</div>
+        <h4 style="color:#b44fff;">Spear-Phishing</h4>
+        <p>Targeted attacks using victim's name, role, or colleagues to appear legitimate. Far more convincing and dangerous than generic mass phishing campaigns.</p>
+      </div>
+      <div class="card" style="border-color:rgba(160,0,255,.18);">
+        <div class="ico">🎭</div>
+        <h4 style="color:#b44fff;">Pretexting</h4>
+        <p>Attacker fabricates a scenario — "I'm IT support, I need your login to fix a critical issue" — to psychologically manipulate the victim into compliance.</p>
+      </div>
+    </div>
+    <div class="quote" style="border-color:#b44fff;background:rgba(160,0,255,.05);margin-top:18px;">
+      <p>"Employees are targeted because they hold system access and aren't always trained to question urgency-driven requests."</p>
+    </div>
+  </div>
+  <div class="page-info">
+    <span class="page-num">03 / 15</span>
+    <div class="presenter-pill">
+      <div class="p-av" style="background:linear-gradient(135deg,#7700ff,#b44fff);">ML</div>
+      <div><div class="p-label">Presenter</div><div class="p-name">Muth Linna</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4 · Real-World Phishing Cases -->
+<div class="slide" style="background:linear-gradient(135deg,#0e0820,#180d30);">
+  <div class="blob" style="width:360px;height:360px;background:#5500cc;bottom:0;left:-80px;"></div>
+  <div class="content">
+    <div class="badge b-purple">Part 1 · Real-World Cases</div>
+    <div class="aline" style="background:linear-gradient(90deg,#b44fff,#7700ff);"></div>
+    <h2 class="ht">When Phishing <span style="color:#b44fff;">Succeeded</span></h2>
+    <div class="two-col">
+      <div class="panel" style="border-color:rgba(160,0,255,.22);">
+        <h4 style="color:#b44fff;">💸 Google & Facebook (2013–2015)</h4>
+        <p class="body" style="font-size:15px;">Evaldas Rimasauskas sent fake invoices impersonating a real supplier to finance teams. Over 2 years, <strong style="color:#fff;">$100M+</strong> was wired to fraudulent accounts before detection.<br><br><em style="color:#7060a0;">Lesson: Finance teams need strict wire-transfer verification protocols.</em></p>
+      </div>
+      <div class="panel" style="border-color:rgba(160,0,255,.22);">
+        <h4 style="color:#b44fff;">🐦 Twitter Hack (2020)</h4>
+        <p class="body" style="font-size:15px;">Attackers posed as IT staff and called employees, convincing them to surrender admin credentials. Obama, Musk & Apple accounts hijacked in a <strong style="color:#fff;">Bitcoin scam</strong>.<br><br><em style="color:#7060a0;">Lesson: Voice phishing (vishing) is as dangerous as email phishing.</em></p>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:18px;background:rgba(160,0,255,.05);border-color:rgba(160,0,255,.18);">
+      <h4 style="color:#b44fff;">❓ Why Employees Are the Primary Target</h4>
+      <p class="body" style="font-size:15px;">Employees have <strong style="color:#fff;">legitimate system access</strong>, work under time pressure, and may lack advanced security training. It is far easier to trick a human than defeat a firewall. <strong style="color:#fff;">95% of all breaches</strong> involve human error. (IBM, 2024)</p>
+    </div>
+  </div>
+  <div class="page-info">
+    <span class="page-num">04 / 15</span>
+    <div class="presenter-pill">
+      <div class="p-av" style="background:linear-gradient(135deg,#7700ff,#b44fff);">ML</div>
+      <div><div class="p-label">Presenter</div><div class="p-name">Muth Linna</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+  SLIDES 5–6 · CHHUOY SOKI 🟢
+  Topic: Password & Auth Threats
+══════════════════════════════════ -->
+
+<!-- SLIDE 5 · Password Threats -->
+<div class="slide" style="background:linear-gradient(135deg,#060f0c,#0a1e14);">
+  <div class="blob" style="width:440px;height:440px;background:#00aa55;top:-110px;right:-90px;"></div>
+  <div class="content">
+    <div class="badge b-green">Part 2 · Password & Authentication Threats</div>
+    <div class="aline" style="background:linear-gradient(90deg,#00dc78,#00aa55);"></div>
+    <h2 class="ht">Password & <span style="color:#00dc78;">Authentication</span> Threats</h2>
+    <div class="two-col">
+      <div>
+        <div class="panel" style="border-color:rgba(0,220,120,.22);">
+          <h4 style="color:#00dc78;">⚠️ Common Vulnerabilities</h4>
+          <ul class="sl sl-green">
+            <li><strong>Weak passwords</strong> — "123456" cracked in under 1 second by brute-force tools.</li>
+            <li><strong>Password reuse</strong> — one breached site exposes all accounts ("credential stuffing").</li>
+            <li><strong>Dictionary attacks</strong> — automated tools cycle millions of common words instantly.</li>
+            <li><strong>Default credentials</strong> — "admin/admin" shipped with devices and never changed.</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="panel" style="border-color:rgba(0,220,120,.18);">
+          <h4 style="color:#00dc78;">🤝 Credential Sharing Risks</h4>
+          <ul class="sl sl-green">
+            <li>Removes individual accountability — impossible to trace who did what.</li>
+            <li>Complicates security audits and access reviews.</li>
+            <li>One disgruntled employee can compromise all shared accounts.</li>
+          </ul>
+        </div>
+        <div class="panel" style="margin-top:16px;border-color:rgba(0,220,120,.15);">
+          <h4 style="color:#00dc78;">📡 Unsecured Authentication</h4>
+          <p class="body" style="font-size:15px;">Public Wi-Fi or plain HTTP logins expose credentials to <strong style="color:#fff;">Man-in-the-Middle (MitM)</strong> attacks — attackers intercept traffic invisibly and silently.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="page-info">
+    <span class="page-num">05 / 15</span>
+    <div class="presenter-pill">
+      <div class="p-av" style="background:linear-gradient(135deg,#00aa55,#00dc78);">CS</div>
+      <div><div class="p-label">Presenter</div><div class="p-name">Chhuoy Soki</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6 · Email Safety -->
+<div class="slide" style="background:linear-gradient(135deg,#060f0c,#0a1e14);">
+  <div class="blob" style="width:380px;height:380px;background:#008844;bottom:0;left:-60px;"></div>
+  <div class="content">
+    <div class="badge b-green">Part 2 · Email & Communication Safety</div>
+    <div class="aline" style="background:linear-gradient(90deg,#00dc78,#00aa55);"></div>
+    <h2 class="ht">Email & Communication <span style="color:#00dc78;">Safety</span></h2>
+    <p class="body" style="max-width:700px;margin-bottom:6px;">Email is the #1 attack vector. These 5 rules are your frontline defense.</p>
+    <div class="steps">
+      <div class="step" style="border-color:rgba(0,220,120,.22);">
+        <div class="snum" style="color:#00dc78;">01</div>
+        <p><strong>Verify sender address</strong> — check the full email, not just the display name. "HR Dept" can hide attacker@evil.com.</p>
+      </div>
+      <div class="step" style="border-color:rgba(0,220,120,.18);">
+        <div class="snum" style="color:#00dc78;">02</div>
+        <p><strong>Hover before clicking</strong> — preview the actual destination URL before any click on any link.</p>
+      </div>
+      <div class="step" style="border-color:rgba(0,220,120,.18);">
+        <div class="snum" style="color:#00dc78;">03</div>
+        <p><strong>Question urgency</strong> — "Act NOW or lose access!" is a manipulation tactic, not a real IT warning.</p>
+      </div>
+      <div class="step" style="border-color:rgba(0,220,120,.18);">
+        <div class="snum" style="color:#00dc78;">04</div>
+        <p><strong>Spot errors</strong> — grammar mistakes, odd logos, or strange formatting signal a phishing attempt.</p>
+      </div>
+      <div class="step" style="border-color:rgba(0,220,120,.18);">
+        <div class="snum" style="color:#00dc78;">05</div>
+        <p><strong>Never share credentials</strong> — no legitimate service ever requests passwords by email.</p>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:18px;background:rgba(0,220,120,.04);border-color:rgba(0,220,120,.18);">
+      <h4 style="color:#00dc78;">📢 Why Reporting to IT Matters</h4>
+      <p class="body" style="font-size:15px;">One report lets IT <strong style="color:#fff;">block malicious domains for the entire organization</strong> — one person's vigilance protects everyone.</p>
+    </div>
+  </div>
+  <div class="page-info">
+    <span class="page-num">06 / 15</span>
+    <div class="presenter-pill">
+      <div class="p-av" style="background:linear-gradient(135deg,#00aa55,#00dc78);">CS</div>
+      <div><div class="p-label">Presenter</div><div class="p-name">Chhuoy Soki</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+  SLIDES 7–8 · VEY SARA 🩷
+  Topic: Physical Security Threats
+══════════════════════════════════ -->
+
+<!-- SLIDE 7 · Physical Threats -->
+<div class="slide" style="background:linear-gradient(135deg,#0c0820,#160a28);">
+  <div class="blob" style="width:440px;height:440px;background:#aa0088;top:-90px;right:-90px;"></div>
+  <div class="content">
+    <div class="badge b-pink">Part 3 · Physical Security Threats</div>
+    <div class="aline" style="background:linear-gradient(90deg,#ff50a0,#aa0088);"></div>
+    <h2 class="ht">Physical Security <span style="color:#ff50a0;">Threats</span></h2>
+    <div class="cards" style="margin-top:18px;">
+      <div class="card" style="border-color:rgba(255,80,160,.28);">
+        <div class="ico">🚶</div>
+        <h4 style="color:#ff50a0;">Tailgating</h4>
+        <p>Unauthorized persons follow badge-holding staff through secure doors — then freely access server rooms, plant keyloggers, or intercept sensitive data.</p>
+      </div>
+      <div class="card" style="border-color:rgba(255,80,160,.22);">
+        <div class="ico">💻</div>
+        <h4 style="color:#ff50a0;">Unattended Devices</h4>
+        <p>30 seconds with an unlocked laptop is enough to install malware via USB, harvest saved credentials, or copy confidential files with no trace left behind.</p>
+      </div>
+      <div class="card" style="border-color:rgba(255,80,160,.22);">
+        <div class="ico">👀</div>
+        <h4 style="color:#ff50a0;">Shoulder Surfing</h4>
+        <p>Watching screens or keypads in cafes, airports, or open offices captures passwords and sensitive data in real time — requires zero technical skill.</p>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:18px;background:rgba(255,80,160,.05);border-color:rgba(255,80,160,.22);">
+      <h4 style="color:#ff50a0;">🔗 How Physical Breaches Escalate to Digital Disasters</h4>
+      <p class="body" style="font-size:15px;">Physical access bypasses every digital defense. A stolen laptop holds cached credentials and VPN configs. A tailgater reaching the server room can plug in a rogue device that silently exfiltrates data for months.</p>
+    </div>
+  </div>
+  <div class="page-info">
+    <span class="page-num">07 / 15</span>
+    <div class="presenter-pill">
+      <div class="p-av" style="background:linear-gradient(135deg,#aa0088,#ff50a0);">VS</div>
+      <div><div class="p-label">Presenter</div><div class="p-name">Vey Sara</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8 · Scenario Response -->
+<div class="slide" style="background:linear-gradient(135deg,#0c0820,#160a28);">
+  <div class="blob" style="width:360px;height:360px;background:#880066;bottom:0;left:-60px;"></div>
+  <div class="content">
+    <div class="badge b-pink">Part 3 · Scenario-Based Response</div>
+    <div class="aline" style="background:linear-gradient(90deg,#ff50a0,#aa0088);"></div>
+    <h2 class="ht">The HR <span style="color:#ff50a0;">Phishing Email</span> Scenario</h2>
+    <div class="scenario-box">
+      <p>An employee receives an email appearing to be from HR, asking them to click a link to update payroll information. It has the company logo but contains <strong>grammatical errors</strong> and an <strong>unfamiliar sender address</strong>.</p>
+    </div>
+    <div class="steps">
+      <div class="step" style="border-color:rgba(255,80,160,.28);">
+        <div class="snum" style="color:#ff50a0;">Q1</div>
+        <p><strong>Verify legitimacy:</strong> Inspect the full sender address. Do NOT click. Call HR on a known number. Forward to IT Security for analysis before any action.</p>
+      </div>
+      <div class="step" style="border-color:rgba(255,80,160,.22);">
+        <div class="snum" style="color:#ff50a0;">Q2</div>
+        <p><strong>Already clicked?</strong> Change the password immediately. Notify IT. Activate MFA now. Monitor all accounts for suspicious activity. File an incident report.</p>
+      </div>
+      <div class="step" style="border-color:rgba(255,80,160,.22);">
+        <div class="snum" style="color:#ff50a0;">Q3</div>
+        <p><strong>Prevention:</strong> Deploy AI email filtering. Enforce MFA everywhere. Implement DMARC/SPF/DKIM. Run regular phishing simulations for all staff.</p>
+      </div>
+    </div>
+  </div>
+  <div class="page-info">
+    <span class="page-num">08 / 15</span>
+    <div class="presenter-pill">
+      <div class="p-av" style="background:linear-gradient(135deg,#aa0088,#ff50a0);">VS</div>
+      <div><div class="p-label">Presenter</div><div class="p-name">Vey Sara</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+  SLIDES 9–10 · HANG VANSAO 🩵
+  Topic: Email Safety & Best Practices
+══════════════════════════════════ -->
+
+<!-- SLIDE 9 · Security Culture -->
+<div class="slide" style="background:linear-gradient(135deg,#050f10,#091c1e);">
+  <div class="blob" style="width:440px;height:440px;background:#007788;top:-110px;right:-90px;"></div>
+  <div class="content">
+    <div class="badge b-teal">Part 4 · Building a Security Culture</div>
+    <div class="aline" style="background:linear-gradient(90deg,#00dcc8,#007788);"></div>
+    <h2 class="ht">Building a <span style="color:#00dcc8;">Security-Aware</span> Culture</h2>
+    <div class="cards" style="margin-top:18px;">
+      <div class="card" style="border-color:rgba(0,220,200,.22);">
+        <div class="ico">🎣</div>
+        <h4 style="color:#00dcc8;">Simulated Phishing</h4>
+        <p>Send controlled fake phishing emails. Employees who click receive instant micro-training — hands-on, memorable, measurable, and never punitive.</p>
+      </div>
+      <div class="card" style="border-color:rgba(0,220,200,.18);">
+        <div class="ico">🎮</div>
+        <h4 style="color:#00dcc8;">Gamification</h4>
+        <p>Leaderboards, badges, and security quizzes turn dry compliance into engaging competition — boosting retention by up to 60% vs. standard training.</p>
+      </div>
+      <div class="card" style="border-color:rgba(0,220,200,.18);">
+        <div class="ico">🏫</div>
+        <h4 style="color:#00dcc8;">Workshops & Role-Play</h4>
+        <p>Practice responding to social engineering calls and suspicious emails in a safe, guided environment — builds real security muscle memory.</p>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:18px;background:rgba(0,220,200,.04);border-color:rgba(0,220,200,.18);">
+      <h4 style="color:#00dcc8;">🔄 Why Continuous Training Is Non-Negotiable</h4>
+      <p class="body" style="font-size:15px;">Threats evolve — AI deepfake phishing, QR code attacks, and smishing are surging in 2024–2025. Quarterly updates keep employees ahead of new vectors, not just last year's ones.</p>
+    </div>
+  </div>
+  <div class="page-info">
+    <span class="page-num">09 / 15</span>
+    <div class="presenter-pill">
+      <div class="p-av" style="background:linear-gradient(135deg,#007788,#00dcc8);">HV</div>
+      <div><div class="p-label">Presenter</div><div class="p-name">Hang Vansao</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10 · Policies & Leadership -->
+<div class="slide" style="background:linear-gradient(135deg,#050f10,#091c1e);">
+  <div class="blob" style="width:360px;height:360px;background:#006677;bottom:0;left:0;"></div>
+  <div class="content">
+    <div class="badge b-teal">Part 4 · Policies & Leadership</div>
+    <div class="aline" style="background:linear-gradient(90deg,#00dcc8,#007788);"></div>
+    <h2 class="ht">Policies, Enforcement <span style="color:#00dcc8;">&amp; Leadership</span></h2>
+    <div class="two-col">
+      <div>
+        <div class="panel" style="border-color:rgba(0,220,200,.22);">
+          <h4 style="color:#00dcc8;">📜 Key Security Policies</h4>
+          <ul class="sl sl-teal">
+            <li><strong>Acceptable Use Policy (AUP):</strong> Defines what employees may do with systems and devices.</li>
+            <li><strong>Incident Reporting Policy:</strong> Clear steps to report breaches — turning days of delay into minutes.</li>
+            <li><strong>Data Classification Policy:</strong> Labels data Public / Internal / Confidential / Secret.</li>
+            <li><strong>BYOD Policy:</strong> Governs personal devices accessing corporate networks.</li>
+          </ul>
+        </div>
+        <div class="panel" style="margin-top:16px;border-color:rgba(0,220,200,.13);">
+          <h4 style="color:#00dcc8;">⚖️ Security vs. Productivity</h4>
+          <p class="body" style="font-size:15px;">Use SSO to reduce friction. Co-create policies with employees for buy-in. Make the secure path the easiest path.</p>
+        </div>
+      </div>
+      <div class="panel" style="border-color:rgba(0,220,200,.22);">
+        <h4 style="color:#00dcc8;">👔 Why Leadership Is the Foundation</h4>
+        <ul class="sl sl-teal">
+          <li><strong>Sets the tone</strong> — when executives follow policies, everyone else does too.</li>
+          <li><strong>Controls budget</strong> — tools, training, and response plans need executive sign-off.</li>
+          <li><strong>Drives accountability</strong> — security becomes a business priority, not just IT's burden.</li>
+          <li><strong>Builds trust</strong> — a blame-free culture encourages faster incident reporting.</li>
+        </ul>
+        <div class="quote" style="border-color:#00dcc8;background:rgba(0,220,200,.04);margin-top:14px;">
+          <p>"Security is not the IT department's problem. It is every leader's responsibility." — NIST CSF 2.0</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="page-info">
+    <span class="page-num">10 / 15</span>
+    <div class="presenter-pill">
+      <div class="p-av" style="background:linear-gradient(135deg,#007788,#00dcc8);">HV</div>
+      <div><div class="p-label">Presenter</div><div class="p-name">Hang Vansao</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+  SLIDES 11–12 · NHEA VILLA 🟠
+  Topic: Password Mgmt, MFA & Devices
+══════════════════════════════════ -->
+
+<!-- SLIDE 11 · Password Mgmt & MFA -->
+<div class="slide" style="background:linear-gradient(135deg,#0f0c04,#1c1408);">
+  <div class="blob" style="width:440px;height:440px;background:#cc7700;top:-110px;right:-90px;"></div>
+  <div class="blob" style="width:290px;height:290px;background:#ff4400;bottom:0;left:0;"></div>
+  <div class="content">
+    <div class="badge b-orange">Part 5 · Password Management & MFA</div>
+    <div class="aline" style="background:linear-gradient(90deg,#ff9600,#cc4400);"></div>
+    <h2 class="ht">Password Management <span style="color:#ff9600;">& MFA</span></h2>
+    <div class="two-col">
+      <div>
+        <div class="panel" style="border-color:rgba(255,150,0,.22);">
+          <h4 style="color:#ff9600;">✅ 3 Best Practices</h4>
+          <ul class="sl sl-orange">
+            <li>Use <strong>long passphrases</strong> (16+ chars) — "Coffee!Laptop#2024" beats "P@ss1" every time.</li>
+            <li><strong>Unique password per account</strong> — never reuse. One breach must never cascade.</li>
+            <li><strong>Change immediately</strong> after any suspected compromise — don't delay.</li>
+          </ul>
+        </div>
+        <div class="panel" style="margin-top:16px;border-color:rgba(255,150,0,.16);">
+          <h4 style="color:#ff9600;">🗂️ Password Managers</h4>
+          <p class="body" style="font-size:15px;"><strong style="color:#fff;">Bitwarden, 1Password, KeePass</strong> — generate and store complex unique passwords. One master password, zero reuse risk.</p>
+        </div>
+      </div>
+      <div class="panel" style="border-color:rgba(255,150,0,.22);">
+        <h4 style="color:#ff9600;">📱 Multi-Factor Authentication (MFA)</h4>
+        <p class="body" style="font-size:15px;margin-bottom:14px;">A second layer attackers can't bypass even with your password:</p>
+        <ul class="sl sl-orange">
+          <li><strong>Something you know</strong> — password or PIN</li>
+          <li><strong>Something you have</strong> — authenticator app, SMS code, YubiKey hardware token</li>
+          <li><strong>Something you are</strong> — fingerprint or facial recognition</li>
+        </ul>
+        <div class="quote" style="border-color:#ff9600;background:rgba(255,150,0,.05);margin-top:14px;">
+          <p>MFA blocks <strong style="color:#ff9600;">99.9% of automated attacks</strong> — a stolen password alone is useless. <em>— Microsoft, 2023</em></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="page-info">
+    <span class="page-num">11 / 15</span>
+    <div class="presenter-pill">
+      <div class="p-av" style="background:linear-gradient(135deg,#cc7700,#ff9600);">NV</div>
+      <div><div class="p-label">Presenter</div><div class="p-name">Nhea Villa</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 12 · Device & Data Protection -->
+<div class="slide" style="background:linear-gradient(135deg,#0f0c04,#1c1408);">
+  <div class="blob" style="width:390px;height:390px;background:#aa5500;bottom:0;right:0;"></div>
+  <div class="content">
+    <div class="badge b-orange">Part 5 · Device & Data Protection</div>
+    <div class="aline" style="background:linear-gradient(90deg,#ff9600,#cc4400);"></div>
+    <h2 class="ht">Device & <span style="color:#ff9600;">Data Protection</span></h2>
+    <div class="two-col">
+      <div class="panel" style="border-color:rgba(255,150,0,.22);">
+        <h4 style="color:#ff9600;">💻 Securing Work Devices</h4>
+        <ul class="sl sl-orange">
+          <li>Enable <strong>full-disk encryption</strong> — BitLocker (Windows) or FileVault (Mac)</li>
+          <li><strong>Lock screen instantly</strong> when stepping away — Win+L or 60-sec auto-lock</li>
+          <li>Keep <strong>OS & software updated</strong> — patches close actively exploited vulnerabilities</li>
+          <li>Use a <strong>VPN</strong> on any remote or public network</li>
+          <li>Only install <strong>IT-approved software</strong> — shadow IT introduces unvetted risk</li>
+          <li>Enable <strong>remote wipe</strong> for lost or stolen devices</li>
+        </ul>
+      </div>
+      <div class="panel" style="border-color:rgba(255,150,0,.16);">
+        <h4 style="color:#ff9600;">🗂️ Clean Desk Policy</h4>
+        <p class="body" style="font-size:15px;margin-bottom:14px;">Clear all sensitive materials from your desk at end of each day. Prevents:</p>
+        <ul class="sl sl-orange">
+          <li>Unauthorized viewing by visitors or cleaning staff</li>
+          <li>Overnight document or device theft</li>
+          <li>Post-it note passwords — the most common physical vulnerability</li>
+          <li>Data exposure during unauthorized after-hours access</li>
+        </ul>
+        <div class="quote" style="border-color:#ff9600;background:rgba(255,150,0,.05);margin-top:14px;">
+          <p>"If it's confidential, lock it away — don't leave it for the cleaning crew to find."</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="page-info">
+    <span class="page-num">12 / 15</span>
+    <div class="presenter-pill">
+      <div class="p-av" style="background:linear-gradient(135deg,#cc7700,#ff9600);">NV</div>
+      <div><div class="p-label">Presenter</div><div class="p-name">Nhea Villa</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+  SLIDES 13–14 · REM HAY 🔴
+  Topic: Security Culture & Closing
+══════════════════════════════════ -->
+
+<!-- SLIDE 13 · References & Closing -->
+<div class="slide" style="background:linear-gradient(135deg,#1a0808,#200d10);">
+  <div class="blob" style="width:440px;height:440px;background:#cc1122;top:-90px;right:-90px;"></div>
+  <div class="content">
+    <div class="badge b-red">Part 6 · Summary & References</div>
+    <div class="aline" style="background:linear-gradient(90deg,#ff5060,#cc1122);"></div>
+    <h2 class="ht">Summary & <span style="color:#ff5060;">Key Takeaways</span></h2>
+    <div class="two-col" style="margin-top:20px;">
+      <div class="panel" style="border-color:rgba(255,50,80,.22);">
+        <h4 style="color:#ff5060;">📚 References</h4>
+        <ul class="sl sl-red" style="font-size:15px;">
+          <li>NIST Cybersecurity Framework 2.0 — <em>nist.gov/cyberframework</em></li>
+          <li>IBM Cost of a Data Breach Report 2024 — <em>ibm.com/security/data-breach</em></li>
+          <li>Verizon DBIR 2024 — <em>verizon.com/business/resources/reports/dbir</em></li>
+          <li>Microsoft Security Report 2023 — <em>"MFA blocks 99.9% of attacks"</em></li>
+        </ul>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="panel" style="border-color:rgba(255,50,80,.16);">
+          <h4 style="color:#ff5060;">🛡️ The Core Message</h4>
+          <p class="body" style="font-size:15px;">Cybersecurity is a <strong style="color:#fff;">people problem</strong> first. Every employee is both a potential vulnerability and the most powerful line of defense. Awareness is your strongest firewall.</p>
+        </div>
+        <div style="background:rgba(255,50,80,.04);border:1px solid rgba(255,50,80,.15);border-radius:16px;padding:18px;">
+          <p style="font-size:10px;color:#603030;letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:12px;">Our Team</p>
+          <div class="members">
+            <div class="mc"><span class="mn">01</span><span class="mname">Kroh Veang</span></div>
+            <div class="mc"><span class="mn">02</span><span class="mname">Muth Linna</span></div>
+            <div class="mc"><span class="mn">03</span><span class="mname">Chhuoy Soki</span></div>
+            <div class="mc"><span class="mn">04</span><span class="mname">Vey Sara</span></div>
+            <div class="mc"><span class="mn">05</span><span class="mname">Hang Vansao</span></div>
+            <div class="mc"><span class="mn">06</span><span class="mname">Nhea Villa</span></div>
+            <div class="mc"><span class="mn">07</span><span class="mname">Rem Hay</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="page-info">
+    <span class="page-num">13 / 15</span>
+    <div class="presenter-pill">
+      <div class="p-av" style="background:linear-gradient(135deg,#cc1122,#ff5060);">RH</div>
+      <div><div class="p-label">Presenter</div><div class="p-name">Rem Hay</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 14 · Thank You -->
+<div class="slide" style="background:linear-gradient(135deg,#1a0808,#200d10);">
+  <div class="blob" style="width:360px;height:360px;background:#aa0011;bottom:0;left:-60px;"></div>
+  <div class="grid-bg"></div>
+  <div class="content" style="text-align:center;align-items:center;display:flex;flex-direction:column;">
+    <div style="font-size:72px;margin-bottom:20px;">🛡️</div>
+    <div class="badge b-red" style="margin:0 auto 20px;">Thank You</div>
+    <h1 class="big" style="font-size:52px;text-align:center;">Security is <span style="color:#ff5060;">Everyone's</span><br>Responsibility</h1>
+    <p class="lead" style="text-align:center;margin-top:14px;font-size:17px;">"The strength of an organization's cybersecurity is only as strong as its least-informed employee."</p>
+    <div style="display:flex;gap:20px;margin-top:32px;justify-content:center;flex-wrap:wrap;">
+      <div style="background:rgba(255,50,80,.08);border:1px solid rgba(255,50,80,.2);border-radius:14px;padding:16px 28px;text-align:center;">
+        <div style="font-size:32px;font-weight:900;color:#ff5060;">Any</div>
+        <div style="font-size:13px;color:#604040;margin-top:4px;">Questions?</div>
+      </div>
+      <div style="background:rgba(0,180,255,.08);border:1px solid rgba(0,180,255,.2);border-radius:14px;padding:16px 28px;text-align:center;">
+        <div style="font-size:32px;font-weight:900;color:#00b4ff;">Next</div>
+        <div style="font-size:13px;color:#304060;margin-top:4px;">→ Quiz Time!</div>
+      </div>
+    </div>
+  </div>
+  <div class="page-info">
+    <span class="page-num">14 / 15</span>
+    <div class="presenter-pill">
+      <div class="p-av" style="background:linear-gradient(135deg,#cc1122,#ff5060);">RH</div>
+      <div><div class="p-label">Presenter</div><div class="p-name">Rem Hay</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+  SLIDE 15 · QUIZ (All Team)
+══════════════════════════════════ -->
+<div class="slide" style="background:linear-gradient(135deg,#07090f,#0e1220);justify-content:flex-start;padding-top:52px;">
+  <div class="blob" style="width:400px;height:400px;background:#0044ff;top:-100px;right:-100px;"></div>
+  <div class="blob" style="width:300px;height:300px;background:#7700cc;bottom:-60px;left:-60px;"></div>
+  <div class="content" style="height:calc(100vh - 140px);display:flex;flex-direction:column;">
+    <div class="badge b-blue" style="margin-bottom:10px;">🧠 Audience Quiz — Test Your Knowledge</div>
+    <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="qbar" style="width:0%;"></div></div>
+    <div id="qview" style="flex:1;display:flex;flex-direction:column;justify-content:center;">
+      <div class="quiz-wrap">
+        <div class="quiz-q" id="qtext"></div>
+        <div class="quiz-opts" id="qopts"></div>
+        <div class="quiz-feedback" id="qfeedback"></div>
+        <div class="quiz-nav">
+          <div class="quiz-prog" id="qprog"></div>
+          <button class="qbtn" id="qnext" onclick="nextQ()" style="display:none;">Next Question →</button>
+        </div>
+      </div>
+    </div>
+    <div class="score-screen" id="scoreView">
+      <div class="quiz-wrap" style="text-align:center;">
+        <div style="font-size:50px;margin-bottom:16px;">🏆</div>
+        <div class="score-big accent" id="scoreBig"></div>
+        <div style="font-size:20px;color:#90aec8;margin-top:10px;" id="scoreMsg"></div>
+        <div style="margin-top:30px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap;" id="scoreBreakdown"></div>
+        <button class="qbtn" onclick="restartQuiz()" style="margin-top:28px;font-size:16px;padding:13px 36px;">🔄 Restart Quiz</button>
+      </div>
+    </div>
+  </div>
+  <div class="page-info"><span class="page-num">15 / 15</span></div>
+</div>
+
+</div><!-- /pres -->
+
+<nav class="nav">
+  <button onclick="go(-1)">‹</button>
+  <div class="dots" id="dots"></div>
+  <span class="counter" id="counter">1 / 15</span>
+  <button onclick="go(1)">›</button>
+</nav>
+
+<script>
+// ── SLIDE NAV ──
+const slides=document.querySelectorAll('.slide');
+const dotsEl=document.getElementById('dots');
+const counter=document.getElementById('counter');
+let cur=0;
+slides.forEach((_,i)=>{
+  const d=document.createElement('div');
+  d.className='dot'+(i===0?' active':'');
+  d.onclick=()=>goTo(i);
+  dotsEl.appendChild(d);
+});
+function goTo(n){
+  slides[cur].classList.remove('active');
+  dotsEl.children[cur].classList.remove('active');
+  cur=(n+slides.length)%slides.length;
+  slides[cur].classList.add('active');
+  dotsEl.children[cur].classList.add('active');
+  counter.textContent=`${cur+1} / ${slides.length}`;
+  if(cur===slides.length-1)initQuiz();
+}
+function go(d){goTo(cur+d);}
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown')go(1);
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp')go(-1);
+});
+
+// ── QUIZ ──
+const questions=[
+  {q:"What is phishing?",opts:["A type of network firewall","Deceptive emails that steal credentials or install malware","A password management tool","A method of encrypting data"],ans:1},
+  {q:"Which attack uses personal information about the victim to appear highly credible?",opts:["Generic phishing","Pretexting","Spear-phishing","Shoulder surfing"],ans:2},
+  {q:"What percentage of data breaches involve human error? (IBM, 2024)",opts:["42%","70%","95%","58%"],ans:2},
+  {q:"What is 'credential stuffing'?",opts:["Using a password manager","Reusing one breached password across multiple accounts","Writing passwords on paper","Encrypting login credentials"],ans:1},
+  {q:"What does MFA stand for?",opts:["Multiple Firewall Authentication","Multi-Factor Authentication","Managed File Access","Main Firewall Algorithm"],ans:1},
+  {q:"According to Microsoft (2023), how many automated attacks does MFA block?",opts:["50%","75%","90%","99.9%"],ans:3},
+  {q:"What should you do FIRST upon receiving a suspicious email from 'HR'?",opts:["Click the link to investigate","Forward it to all colleagues","Verify the sender address and contact HR directly","Delete it immediately without reporting"],ans:2},
+  {q:"What is 'tailgating' in physical security?",opts:["Leaving a laptop unattended","Following an authorized person through a secure door without credentials","Watching someone type their password","Sending a fake IT support email"],ans:1},
+  {q:"What does the Clean Desk Policy require employees to do?",opts:["Use standing desks only","Clear sensitive documents and devices from desks at end of day","Decorate desks with company branding","Share desks with colleagues"],ans:1},
+  {q:"Why is leadership support critical for a security-aware culture?",opts:["Leaders handle all IT issues directly","Leaders control budget, set tone, and make security an organization-wide priority","Leaders are responsible for writing all security policies alone","Leaders are exempt from following security policies"],ans:1},
+];
+
+let qi=0,score=0,answered=false,initialized=false;
+function initQuiz(){
+  if(initialized)return;
+  initialized=true;qi=0;score=0;
+  document.getElementById('qview').style.display='flex';
+  document.getElementById('scoreView').classList.remove('show');
+  renderQ();
+}
+function renderQ(){
+  answered=false;
+  const q=questions[qi];
+  document.getElementById('qtext').textContent=`Q${qi+1}. ${q.q}`;
+  document.getElementById('qfeedback').textContent='';
+  document.getElementById('qfeedback').className='quiz-feedback';
+  document.getElementById('qnext').style.display='none';
+  document.getElementById('qprog').textContent=`Question ${qi+1} of ${questions.length}`;
+  document.getElementById('qbar').style.width=`${(qi/questions.length)*100}%`;
+  const letters=['A','B','C','D'];
+  const opts=document.getElementById('qopts');
+  opts.innerHTML='';
+  q.opts.forEach((o,i)=>{
+    const btn=document.createElement('button');
+    btn.className='opt';
+    btn.innerHTML=`<span class="opt-letter">${letters[i]}</span>${o}`;
+    btn.onclick=()=>selectOpt(i,btn);
+    opts.appendChild(btn);
+  });
+}
+function selectOpt(i,btn){
+  if(answered)return;
+  answered=true;
+  const q=questions[qi];
+  document.querySelectorAll('.opt').forEach(o=>o.classList.add('disabled'));
+  const fb=document.getElementById('qfeedback');
+  if(i===q.ans){
+    btn.classList.add('correct');
+    fb.textContent='✅ Correct! Well done.';
+    fb.className='quiz-feedback ok';
+    score++;
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt')[q.ans].classList.add('correct');
+    fb.textContent=`❌ Incorrect. Correct answer: "${q.opts[q.ans]}"`;
+    fb.className='quiz-feedback no';
+  }
+  const nxt=document.getElementById('qnext');
+  nxt.style.display='block';
+  nxt.textContent=qi<questions.length-1?'Next Question →':'See Results 🏁';
+}
+function nextQ(){
+  qi++;
+  if(qi<questions.length){renderQ();}
+  else{showScore();}
+}
+function showScore(){
+  document.getElementById('qview').style.display='none';
+  document.getElementById('scoreView').classList.add('show');
+  document.getElementById('qbar').style.width='100%';
+  const pct=Math.round((score/questions.length)*100);
+  document.getElementById('scoreBig').textContent=`${score} / ${questions.length}`;
+  const grade=pct===100?'A+':pct>=90?'A':pct>=80?'B':pct>=70?'C':pct>=60?'D':'F';
+  let emoji='',msg='';
+  if(pct===100){emoji='🌟';msg='Perfect! Outstanding cybersecurity knowledge!';}
+  else if(pct>=80){emoji='🥇';msg='Excellent! Strong understanding of cybersecurity.';}
+  else if(pct>=60){emoji='🥈';msg='Good job! Review a few topics to strengthen your knowledge.';}
+  else{emoji='📚';msg='Keep learning! Revisit the presentation to reinforce key concepts.';}
+  document.getElementById('scoreMsg').innerHTML=`<span style="font-size:32px">${emoji}</span><br>${msg}`;
+  document.getElementById('scoreBreakdown').innerHTML=`
+    <div style="background:rgba(0,180,255,.1);border:1px solid rgba(0,180,255,.3);border-radius:12px;padding:16px 28px;text-align:center;">
+      <div style="font-size:38px;font-weight:900;color:#00b4ff;">${grade}</div>
+      <div style="font-size:13px;color:#5080a0;margin-top:4px;">Grade</div>
+    </div>
+    <div style="background:rgba(0,220,120,.1);border:1px solid rgba(0,220,120,.3);border-radius:12px;padding:16px 28px;text-align:center;">
+      <div style="font-size:38px;font-weight:900;color:#00dc78;">${pct}%</div>
+      <div style="font-size:13px;color:#4a8060;margin-top:4px;">Score</div>
+    </div>
+    <div style="background:rgba(255,150,0,.1);border:1px solid rgba(255,150,0,.3);border-radius:12px;padding:16px 28px;text-align:center;">
+      <div style="font-size:38px;font-weight:900;color:#ff9600;">${score}/${questions.length}</div>
+      <div style="font-size:13px;color:#806040;margin-top:4px;">Correct</div>
+    </div>`;
+}
+function restartQuiz(){
+  qi=0;score=0;initialized=false;
+  document.getElementById('scoreView').classList.remove('show');
+  initQuiz();
+}
+</script>
+</body>
+</html>
