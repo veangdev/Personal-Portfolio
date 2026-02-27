@@ -2,8 +2,9 @@
 
 import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
-import { Moon, Sun, Menu, X } from "lucide-react";
+import { Moon, Sun, Menu, X, Monitor } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const TEXT_LOGO = process.env.TEXT_LOGO || "KV";
 
@@ -107,18 +108,32 @@ export default function Header() {
 
           {/* Theme Toggle & Mobile Menu */}
           <div className="flex items-center space-x-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="btn-masculine"
-            >
-              {theme === "dark" ? (
-                <Sun className="h-5 w-5" />
-              ) : (
-                <Moon className="h-5 w-5" />
-              )}
-            </Button>
+            {/* 3-option theme pill: System / Light / Dark */}
+            <div className="flex items-center gap-0.5 p-1 rounded-full bg-muted">
+              {(
+                [
+                  { value: "system", icon: Monitor, label: "System theme" },
+                  { value: "light",  icon: Sun,     label: "Light theme"  },
+                  { value: "dark",   icon: Moon,    label: "Dark theme"   },
+                ] as const
+              ).map(({ value, icon: Icon, label }) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setTheme(value)}
+                  aria-label={label}
+                  className={cn(
+                    "w-7 h-7 rounded-full flex items-center justify-center",
+                    "transition-all duration-200",
+                    theme === value
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground",
+                  )}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                </button>
+              ))}
+            </div>
 
             {/* Mobile Menu Button */}
             <Button
