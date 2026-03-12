@@ -113,9 +113,10 @@ const skillCategories: SkillCategory[] = [
 ]
 
 const softSkills: SoftSkill[] = [
-  { name: "Quick Learner",               icon: Zap            },
-  { name: "Effective Team Collaborator", icon: HeartHandshake },
-  { name: "High Achievement Drive",      icon: Target         },
+  { name: "Self-Leadership",       icon: Target         },
+  { name: "Results-Oriented",      icon: Zap            },
+  { name: "Effective Collaborator", icon: HeartHandshake },
+  { name: "Adaptable & Fast Learner", icon: Users       },
 ]
 
 // ─── Circle progress indicator ────────────────────────────────────────────────

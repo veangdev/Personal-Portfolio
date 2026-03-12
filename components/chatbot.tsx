@@ -41,7 +41,6 @@ import React, {
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import {
-  MessageSquare,
   X,
   Send,
   Bot,
@@ -754,8 +753,8 @@ export function Chatbot({
         aria-expanded={open}
         aria-haspopup="dialog"
       >
-        {/* MessageSquare → X icon crossfade */}
-        <MessageSquare
+        {/* Bot → X icon crossfade */}
+        <Bot
           className={cn(
             "w-6 h-6 absolute transition-all duration-200",
             open

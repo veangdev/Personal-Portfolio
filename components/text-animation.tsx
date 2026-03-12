@@ -7,7 +7,7 @@ interface TextAnimationProps {
   word?: string;
 }
 
-const DEFAULT_PREFIX = "Full Stack ";
+const DEFAULT_PREFIX = "Full Stack | AI Agent ";
 const DEFAULT_WORD = "Developer";
 const TYPING_INTERVAL_MS = 1000;
 

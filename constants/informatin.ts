@@ -19,20 +19,11 @@ export const SOCIAL_LINKS = {
     label: "LinkedIn",
     icon: Linkedin,
   },
-  EMAIL: {
-    href: "mailto:veangkroh@gmail.com",
-    label: "Email",
-    icon: Mail,
-  },
+
   TELEGRAM: {
-    href: "https://t.me/your_telegram_username", // TODO: replace with your Telegram username
+    href: "https://t.me/@VEANG_DEVMAN", 
     label: "Telegram",
     icon: TelegramIcon,
-  },
-  FACEBOOK: {
-    href: "https://facebook.com/your_facebook_profile", // TODO: replace with your Facebook profile
-    label: "Facebook",
-    icon: FacebookIcon,
   },
 } as const satisfies Record<string, SocialLink>;
 

@@ -80,11 +80,11 @@ export default function Hero() {
               </h2>
 
               <p className="hero-description text-lg text-muted-foreground max-w-6xl leading-relaxed">
-                Full-Stack Developer with {getYearsOfExperience()} years of experience building
-                scalable web platforms and intelligent automation solutions. I
-                help organizations solve complex operational challenges —
-                including implementing AI chatbot systems that improve
-                efficiency and customer engagement.
+                Full-Stack Developer with {getYearsOfExperience()} years of
+                experience building scalable web platforms and intelligent
+                automation solutions. I help organizations solve complex
+                operational challenges — including implementing AI chatbot
+                systems that improve efficiency and customer engagement.
               </p>
               <p className="hero-description text-lg text-muted-foreground max-w-6xl leading-relaxed">
                 Focused on performance, clean architecture, and long-term
@@ -103,7 +103,7 @@ export default function Hero() {
                 View My Work
               </Button>
 
-              <DownloadResume />
+              <DownloadResume resumeUrl="/assets/resume.pdf" />
             </div>
 
             {/* Social Links */}

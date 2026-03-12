@@ -1,7 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { FileDown } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -12,38 +12,56 @@ import {
 import { cn } from "@/lib/utils";
 
 interface DownloadResumeProps {
-  /** shadcn Button variant */
   variant?: "default" | "outline" | "ghost" | "secondary";
-  /** Path to the resume PDF inside /public */
   resumeUrl?: string;
-  /** Extra Tailwind classes forwarded to the Button */
   className?: string;
-  /** Show the tooltip with file metadata */
   showTooltip?: boolean;
-  /** Button label text */
   label?: string;
 }
 
+/** Format ISO string → "Mar 2026" */
+const fmtDate = (iso: string) =>
+  new Date(iso).toLocaleDateString("en-US", {
+    month: "short",
+    year: "numeric",
+  });
+
 export default function DownloadResume({
   variant = "outline",
-  resumeUrl = "/assets/Introduction_to_Cybersecurity_certificate.pdf",
+  resumeUrl = "/assets/resume.pdf",
   className,
   showTooltip = true,
-  label = "Download Resume",
+  label = "Download CV",
 }: DownloadResumeProps) {
+  // Fetch upload date from the metadata file written by the upload API
+  const [updatedLabel, setUpdatedLabel] = useState("Updated Feb 2026");
+
+  useEffect(() => {
+    fetch("/assets/resume-meta.json", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data?.updatedAt) {
+          setUpdatedLabel(`Updated ${fmtDate(data.updatedAt)}`);
+        }
+      })
+      .catch(() => {
+        // No metadata yet — keep the default label
+      });
+  }, []);
+
   const button = (
     <Button
       variant={variant}
       size="lg"
       className={cn(
-        "btn-masculine text-lg px-4 py-6 bg-transparent group border-primary/50 hover:bg-primary/10 transition-all duration-200",
+        "btn-masculine text-lg px-6 py-6 bg-transparent group border-primary/50 hover:bg-primary/10 transition-all duration-200",
         className,
       )}
       asChild
     >
       <a
         href={resumeUrl}
-        download="Kroh-Veang-Resume.pdf"
+        download="Full-Stack-Developer.pdf"
         aria-label="Download Kroh Veang resume as PDF"
       >
         <FileDown className="h-5 w-5 mr-2 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:text-primary" />
@@ -58,8 +76,8 @@ export default function DownloadResume({
     <TooltipProvider delayDuration={200}>
       <Tooltip>
         <TooltipTrigger asChild>{button}</TooltipTrigger>
-        <TooltipContent side="right" className="text-xs font-medium">
-          Updated Feb 2026 · PDF · ATS-friendly
+        <TooltipContent side="right" className="text-xs font-medium py-2">
+          {updatedLabel} · PDF · ATS-friendly
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
