@@ -1,92 +1,116 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState } from "react"
-import { Mail, MapPin, Phone, Send, Loader2, Clock, ArrowUpRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { useToast } from "@/hooks/use-toast"
-import { PROFILE_DATA } from "@/constants/informatin"
-import { cn } from "@/lib/utils"
+import React, { useState } from "react";
+import {
+  Send,
+  Loader2,
+  Briefcase,
+  Globe,
+  Handshake,
+  Building2,
+} from "lucide-react";
+
+import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent } from "@/components/ui/card";
+
+// ── Work-type cards ────────────────────────────────────────────────────────────
+const WORK_TYPES = [
+  {
+    icon: Globe,
+    title: "Remote Full-time",
+    desc: "Looking for my next long-term role in a great team",
+    subject: "Remote Full-time Opportunity",
+  },
+  {
+    icon: Building2,
+    title: "Onsite Full-time",
+    desc: "Open to in-office roles in Phnom Penh or relocation",
+    subject: "Onsite Full-time Opportunity",
+  },
+  {
+    icon: Briefcase,
+    title: "Freelance Project",
+    desc: "Short or long-term contracts — happy to discuss",
+    subject: "Freelance Project Inquiry",
+  },
+  {
+    icon: Handshake,
+    title: "Collaboration",
+    desc: "Side projects, open source, hackathons — let's build",
+    subject: "Collaboration Proposal",
+  },
+] as const;
 
 export default function Contact() {
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const { toast } = useToast()
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [subject, setSubject] = useState("");
+  const [activeType, setActiveType] = useState<string | null>(null);
+  const { toast } = useToast();
+
+  const handleWorkTypeClick = (type: typeof WORK_TYPES[number]) => {
+    setActiveType(type.title);
+    setSubject(type.subject);
+    // Smoothly scroll to form on mobile
+    document.getElementById("contact-form")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-    const form = e.target as HTMLFormElement
-    const data = Object.fromEntries(new FormData(form).entries())
+    e.preventDefault();
+    setIsSubmitting(true);
+    const form = e.target as HTMLFormElement;
+    const data = Object.fromEntries(new FormData(form).entries());
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
-      })
-      if (!res.ok) throw new Error("send_failed")
+      });
+      if (!res.ok) throw new Error("send_failed");
       toast({
         title: "Message sent!",
         description: "Thank you for reaching out. I'll get back to you soon.",
-      })
-      form.reset()
+      });
+      form.reset();
+      setSubject("");
+      setActiveType(null);
     } catch {
       toast({
         title: "Failed to send",
         description: "Please try again or email me directly at veangkroh@gmail.com.",
         variant: "destructive",
-      })
+      });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
-
-  const contactInfo = [
-    {
-      icon: Mail,
-      label: "Email",
-      value: "veangkroh@gmail.com",
-      href: "mailto:veangkroh@gmail.com",
-    },
-    {
-      icon: Phone,
-      label: "Phone",
-      value: "+855 97 614 9359",
-      href: "tel:+85597614359",
-    },
-    {
-      icon: MapPin,
-      label: "Location",
-      value: "Phnom Penh, Cambodia",
-      href: null,
-    },
-  ]
+  };
 
   return (
     <section id="contact" className="py-20">
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto">
 
-          {/* ── Section header ────────────────────────────────────────────── */}
+          {/* Section header */}
           <div className="text-center mb-14 fade-in">
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
               Get In <span className="gradient-text">Touch</span>
             </h2>
-            <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
-              Have a project in mind or want to explore opportunities? I'd love to hear from you.
+            <p className="text-base text-muted-foreground max-w-xl mx-auto leading-relaxed">
+              Have a project in mind or want to explore opportunities? Pick a
+              category below and I'll make sure to reply fast.
             </p>
           </div>
 
-          {/* ── 2-col grid (2 + 3 columns) ────────────────────────────────── */}
           <div className="grid lg:grid-cols-5 gap-10 items-start">
 
-            {/* ── Left — info (2/5) ────────────────────────────────────────── */}
-            <div className="lg:col-span-2 flex flex-col gap-7 slide-in-left">
+            {/* ── Left column (2/5) ─────────────────────────────────────────── */}
+            <div className="lg:col-span-2 flex flex-col gap-6 slide-in-left">
 
-              {/* Availability badge */}
+              {/* Availability */}
               <div className="inline-flex items-center gap-2 self-start px-3 py-1.5 rounded-full border border-green-500/30 bg-green-500/10 text-xs font-semibold text-green-500">
                 <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
                 Open to new opportunities
@@ -94,162 +118,133 @@ export default function Contact() {
 
               {/* Headline */}
               <div>
-                <h3 className="text-2xl font-bold leading-snug mb-3">
-                  Let's build something{" "}
-                  <span className="gradient-text">great together</span>
+                <h3 className="text-2xl font-bold leading-snug mb-2">
+                  Let's work{" "}
+                  <span className="gradient-text">together</span>
                 </h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  I'm open to remote roles, freelance work, and meaningful
-                  collaborations. Whether it's a quick question or a full
-                  project — reach out, I read everything.
+                  Select what fits your needs — it will pre-fill the subject for you.
                 </p>
               </div>
 
-              {/* Contact info cards */}
+              {/* Work-type selector */}
               <div className="flex flex-col gap-2.5">
-                {contactInfo.map((item, i) => (
-                  <div
-                    key={i}
-                    className={cn(
-                      "group flex items-center gap-3.5 px-4 py-3 rounded-xl",
-                      "border border-border/50 hover:border-primary/30",
-                      "bg-muted/30 hover:bg-primary/5",
-                      "transition-all duration-200",
-                    )}
-                  >
-                    {/* Icon */}
-                    <div className="w-9 h-9 rounded-lg bg-primary/10 group-hover:bg-primary/20 flex items-center justify-center shrink-0 transition-colors duration-200">
-                      <item.icon className="w-4 h-4 text-primary" />
-                    </div>
-
-                    {/* Label + value */}
-                    <div className="min-w-0 flex-1">
-                      <p className="text-[10px] uppercase tracking-widest text-muted-foreground/60 mb-0.5">
-                        {item.label}
-                      </p>
-                      {item.href ? (
-                        <a
-                          href={item.href}
-                          className="text-sm font-medium text-foreground hover:text-primary transition-colors duration-150 truncate block"
-                        >
-                          {item.value}
-                        </a>
-                      ) : (
-                        <p className="text-sm font-medium text-foreground truncate">
-                          {item.value}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Arrow indicator for links */}
-                    {item.href && (
-                      <ArrowUpRight className="w-3.5 h-3.5 text-muted-foreground/30 group-hover:text-primary shrink-0 transition-colors duration-150" />
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              {/* Response time */}
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Clock className="w-3.5 h-3.5 text-primary shrink-0" />
-                Typically responds within{" "}
-                <span className="text-foreground font-medium">24 hours</span>
-              </div>
-
-              {/* Social links */}
-              <div>
-                <p className="text-[10px] uppercase tracking-widest text-muted-foreground/60 mb-2.5">
-                  Find me on
-                </p>
-                <div className="flex gap-2">
-                  {Object.values(PROFILE_DATA.socialLinks).map((link, i) => (
-                    <a
-                      key={i}
-                      href={link.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={link.label}
+                {WORK_TYPES.map((type) => {
+                  const isActive = activeType === type.title;
+                  return (
+                    <button
+                      key={type.title}
+                      type="button"
+                      onClick={() => handleWorkTypeClick(type)}
                       className={cn(
-                        "w-9 h-9 rounded-lg flex items-center justify-center",
-                        "bg-muted border border-border/50",
-                        "text-muted-foreground hover:text-primary",
-                        "hover:bg-primary/10 hover:border-primary/30",
-                        "transition-all duration-200",
+                        "group w-full text-left flex items-start gap-3.5 px-4 py-3.5 rounded-xl",
+                        "border transition-all duration-200",
+                        isActive
+                          ? "border-primary/50 bg-primary/8 shadow-sm"
+                          : "border-border/50 bg-muted/20 hover:border-primary/30 hover:bg-primary/5",
                       )}
                     >
-                      <link.icon className="w-4 h-4" />
-                    </a>
-                  ))}
-                </div>
+                      {/* Icon */}
+                      <div className={cn(
+                        "w-9 h-9 rounded-lg flex items-center justify-center shrink-0 mt-0.5 transition-colors duration-200",
+                        isActive ? "bg-primary/20" : "bg-muted group-hover:bg-primary/10",
+                      )}>
+                        <type.icon className={cn(
+                          "w-4 h-4 transition-colors duration-200",
+                          isActive ? "text-primary" : "text-muted-foreground group-hover:text-primary",
+                        )} />
+                      </div>
+
+                      {/* Text */}
+                      <div className="flex-1 min-w-0">
+                        <p className={cn(
+                          "text-sm font-semibold leading-tight mb-0.5 transition-colors duration-200",
+                          isActive ? "text-primary" : "text-foreground",
+                        )}>
+                          {type.title}
+                        </p>
+                        <p className="text-xs text-muted-foreground leading-snug">
+                          {type.desc}
+                        </p>
+                      </div>
+
+                      {/* Active indicator */}
+                      {isActive && (
+                        <span className="shrink-0 w-2 h-2 rounded-full bg-primary mt-1.5" />
+                      )}
+                    </button>
+                  );
+                })}
               </div>
+
             </div>
 
-            {/* ── Right — form (3/5) ────────────────────────────────────────── */}
-            <div className="lg:col-span-3 slide-in-right">
+            {/* ── Right column — form (3/5) ─────────────────────────────────── */}
+            <div className="lg:col-span-3 slide-in-right" id="contact-form">
               <Card className="border-border/50 shadow-sm">
                 <CardContent className="p-6 sm:p-8">
-                  <h3 className="text-lg font-semibold mb-6">Send me a message</h3>
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold">Send me a message</h3>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {activeType
+                        ? `You selected: ${activeType} — subject is pre-filled.`
+                        : "Fill in the form or select a category on the left."}
+                    </p>
+                  </div>
 
-                  <form onSubmit={handleSubmit} className="space-y-5">
+                  <form onSubmit={handleSubmit} className="space-y-4">
 
-                    {/* Username */}
-                    <div className="space-y-1.5">
-                      <Label
-                        htmlFor="username"
-                        className="text-xs font-medium text-muted-foreground"
-                      >
-                        Username
-                      </Label>
-                      <Input
-                        id="username"
-                        name="username"
-                        placeholder="Your name or username"
-                        required
-                        disabled={isSubmitting}
-                      />
+                    {/* Name + Email row */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <Label htmlFor="username" className="text-xs font-medium text-muted-foreground">
+                          Name
+                        </Label>
+                        <Input
+                          id="username"
+                          name="username"
+                          placeholder="Your name"
+                          required
+                          disabled={isSubmitting}
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label htmlFor="email" className="text-xs font-medium text-muted-foreground">
+                          Email
+                        </Label>
+                        <Input
+                          id="email"
+                          name="email"
+                          type="email"
+                          placeholder="you@example.com"
+                          required
+                          disabled={isSubmitting}
+                        />
+                      </div>
                     </div>
 
-                    {/* Email */}
+                    {/* Subject — controlled, pre-filled by work-type cards */}
                     <div className="space-y-1.5">
-                      <Label
-                        htmlFor="email"
-                        className="text-xs font-medium text-muted-foreground"
-                      >
-                        Email Address
-                      </Label>
-                      <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        placeholder="you@example.com"
-                        required
-                        disabled={isSubmitting}
-                      />
-                    </div>
-
-                    {/* Subject */}
-                    <div className="space-y-1.5">
-                      <Label
-                        htmlFor="subject"
-                        className="text-xs font-medium text-muted-foreground"
-                      >
+                      <Label htmlFor="subject" className="text-xs font-medium text-muted-foreground">
                         Subject
                       </Label>
                       <Input
                         id="subject"
                         name="subject"
-                        placeholder="Project collaboration / Job opportunity / etc."
+                        placeholder="What's this about?"
                         required
                         disabled={isSubmitting}
+                        value={subject}
+                        onChange={(e) => {
+                          setSubject(e.target.value);
+                          setActiveType(null);
+                        }}
                       />
                     </div>
 
                     {/* Message */}
                     <div className="space-y-1.5">
-                      <Label
-                        htmlFor="message"
-                        className="text-xs font-medium text-muted-foreground"
-                      >
+                      <Label htmlFor="message" className="text-xs font-medium text-muted-foreground">
                         Message
                       </Label>
                       <Textarea
@@ -265,7 +260,7 @@ export default function Contact() {
 
                     <Button
                       type="submit"
-                      className="w-full gap-2 btn-masculine"
+                      className="w-full gap-2"
                       disabled={isSubmitting}
                     >
                       {isSubmitting ? (
@@ -290,5 +285,5 @@ export default function Contact() {
         </div>
       </div>
     </section>
-  )
+  );
 }
