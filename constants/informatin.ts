@@ -21,7 +21,7 @@ export const SOCIAL_LINKS = {
   },
 
   TELEGRAM: {
-    href: "https://t.me/@VEANG_DEVMAN", 
+    href: "https://t.me/VEANG_DEVMAN", 
     label: "Telegram",
     icon: TelegramIcon,
   },

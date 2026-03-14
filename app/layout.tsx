@@ -5,6 +5,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Chatbot } from "@/components/chatbot";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -54,6 +55,7 @@ export default function RootLayout(arg: { children: React.ReactNode }) {
             apiHost={process.env.NEXT_PUBLIC_FLOWISE_API_HOST ?? ""}
             apiKey={process.env.NEXT_PUBLIC_FLOWISE_API_KEY}
           />
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

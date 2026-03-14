@@ -19,17 +19,24 @@ export default function Contact() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSubmitting(true)
+    const form = e.target as HTMLFormElement
+    const data = Object.fromEntries(new FormData(form).entries())
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      })
+      if (!res.ok) throw new Error("send_failed")
       toast({
-        title: "Message sent successfully!",
+        title: "Message sent!",
         description: "Thank you for reaching out. I'll get back to you soon.",
       })
-      ;(e.target as HTMLFormElement).reset()
+      form.reset()
     } catch {
       toast({
-        title: "Error sending message",
-        description: "Please try again or contact me directly via email.",
+        title: "Failed to send",
+        description: "Please try again or email me directly at veangkroh@gmail.com.",
         variant: "destructive",
       })
     } finally {

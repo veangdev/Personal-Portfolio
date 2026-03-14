@@ -5,11 +5,11 @@ import Image from "next/image";
 import { ArrowDown } from "lucide-react";
 import { useEffect, useRef } from "react";
 
+import TextAnimation from "./text-animation";
+import DownloadResume from "./download-resume";
 import { Button } from "@/components/ui/button";
 import { getYearsOfExperience } from "@/lib/utils";
-import TypewriterTextAnimation from "./text-animation";
 import { SOCIAL_LINKS } from "@/constants/informatin";
-import DownloadResume from "./download-resume";
 
 
 export default function Hero() {
@@ -68,7 +68,6 @@ export default function Hero() {
     >
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Text Content */}
           <div className="space-y-8">
             <div className="space-y-4">
               <h1 className="hero-title text-5xl md:text-7xl font-bold leading-tight">
@@ -76,7 +75,7 @@ export default function Hero() {
               </h1>
 
               <h2 className="hero-subtitle text-2xl md:text-3xl text-muted-foreground font-medium">
-                <TypewriterTextAnimation />
+                <TextAnimation />
               </h2>
 
               <p className="hero-description text-lg text-muted-foreground max-w-6xl leading-relaxed">
@@ -93,7 +92,6 @@ export default function Hero() {
               </p>
             </div>
 
-            {/* CTA Buttons */}
             <div className="hero-buttons flex flex-col sm:flex-row gap-4">
               <Button
                 size="lg"
@@ -105,8 +103,6 @@ export default function Hero() {
 
               <DownloadResume resumeUrl="/assets/resume.pdf" />
             </div>
-
-            {/* Social Links */}
             <div className="flex items-center space-x-5">
               {Object.values(SOCIAL_LINKS).map((link) => {
                 const Icon = link.icon;
@@ -126,7 +122,6 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Profile Image */}
           <div className="hero-image flex justify-center lg:justify-end">
             <div className="relative">
               <div className="w-80 h-80 md:w-96 md:h-96 rounded-full overflow-hidden border-4 border-primary/50 shadow-2xl">
@@ -135,18 +130,16 @@ export default function Hero() {
                   alt="Kroh Veang - Full Stack Developer"
                   width={400}
                   height={400}
-                  // className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-top"
                   priority
                 />
               </div>
-              {/* Decorative elements */}
               <div className="absolute -top-4 -right-4 w-20 h-20 bg-primary/10 rounded-full blur-xl"></div>
               <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-chart-1/10 rounded-full blur-xl"></div>
             </div>
           </div>
         </div>
 
-        {/* Scroll Indicator */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
           <ArrowDown className="h-6 w-6 text-muted-foreground" />
         </div>

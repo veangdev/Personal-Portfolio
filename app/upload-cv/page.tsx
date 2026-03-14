@@ -2,7 +2,6 @@
 
 import React, { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
 import {
   FileUp,
   Lock,
@@ -14,6 +13,7 @@ import {
   FileText,
   ArrowLeft,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 type Status = "idle" | "loading" | "success" | "error";

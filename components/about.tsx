@@ -53,7 +53,7 @@ export default function About() {
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               Full-Stack Developer based in Phnom Penh — building real-time systems,
               AI integrations, and production-grade web apps with{" "}
-              {getYearsOfExperience()}+ years of hands-on experience.
+              {getYearsOfExperience()} years of hands-on experience.
             </p>
           </div>
 
