@@ -1,12 +1,13 @@
 "use client"
 
 import { Code2, Sparkles, Activity, Server, MapPin, GraduationCap, Calendar } from "lucide-react"
-import { Card, CardContent } from "@/components/ui/card"
+
 import { getYearsOfExperience } from "@/lib/utils"
+import { Card, CardContent } from "@/components/ui/card"
 
 export default function About() {
   const stats = [
-    { value: `${getYearsOfExperience()}+`, label: "Years Experience" },
+    { value: `${getYearsOfExperience()}`, label: "Years Experience" },
     { value: "10+",                         label: "Projects Delivered" },
     { value: "2",                           label: "Degrees Earned" },
     { value: "2",                           label: "Languages" },
