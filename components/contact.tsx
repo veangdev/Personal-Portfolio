@@ -35,7 +35,7 @@ const WORK_TYPES = [
   {
     icon: Briefcase,
     title: "Freelance Project",
-    desc: "Short or long-term contracts — happy to discuss",
+    desc: "Short or long-term contracts — happy to discuss scope",
     subject: "Freelance Project Inquiry",
   },
   {
